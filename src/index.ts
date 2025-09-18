@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors"
 import userRoutes from "./routes/user.routes";
 import authRoutes from "./routes/auth.routes";
+import  menusRoutes from "./routes/menus.routes"
 
 const app = express();
 const PORT = 5000;
@@ -17,6 +18,7 @@ app.get("/", (req, res) => {
 
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
+app.use("/menus", menusRoutes)
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
