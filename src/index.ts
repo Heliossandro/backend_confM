@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/menus", menusRoutes)
-app.use("/item", itemRoutes)
+app.use("/items", itemRoutes)
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
