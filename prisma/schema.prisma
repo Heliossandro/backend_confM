@@ -1,8 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// prisma/schema.prisma
 
 generator client {
   provider = "prisma-client-js"
@@ -31,22 +27,23 @@ model Menu {
 }
 
 model Item {
-  id       Int    @id @default(autoincrement())
-  name     String
-  price    Float   
+  id          Int        @id @default(autoincrement())
+  name        String
+  price       Float
   description String
-  menuId   Int
+  status      String     @default("Disponível")
+  menuId      Int
 
-  menu     Menu   @relation(fields: [menuId], references: [id])
-  cartItems CartItem[]
+  menu        Menu       @relation(fields: [menuId], references: [id])
+  cartItems   CartItem[]
 }
 
 model Cart {
-  id        Int       @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   userId    Int
-  createdAt DateTime  @default(now())
+  createdAt DateTime   @default(now())
 
-  user      User   @relation(fields: [userId], references: [id])
+  user      User       @relation(fields: [userId], references: [id])
   items     CartItem[]
 }
 

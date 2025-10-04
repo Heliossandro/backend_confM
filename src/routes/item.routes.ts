@@ -34,9 +34,9 @@ router.get("/:id", async (req, res) => {
 
 // CREATE
 router.post("/", async (req, res) => {
-  const { name, price, description, menuId } = req.body;
+  const { name, price, description, menuId, status } = req.body;
 
-  if (!name || !price || !description || !menuId) {
+  if (!name || !price || !description || !menuId || !status ) {
     return res
       .status(400)
       .json({ error: "Todos os campos são obrigatórios" });
@@ -49,6 +49,7 @@ router.post("/", async (req, res) => {
         price: Number(price),
         description,
         menuId: Number(menuId),
+        status,
       },
     });
 
@@ -62,7 +63,7 @@ router.post("/", async (req, res) => {
 // UPDATE
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { name, price, description, menuId } = req.body;
+  const { name, price, description, menuId, status } = req.body;
 
   try {
     const updatedItem = await prisma.item.update({
@@ -72,6 +73,7 @@ router.put("/:id", async (req, res) => {
         price: Number(price),
         description,
         menuId: Number(menuId),
+        status,
       },
     });
 
