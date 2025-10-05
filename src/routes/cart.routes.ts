@@ -5,18 +5,6 @@ import { transporter } from "../utils/mailer";
 const router = Router();
 const prisma = new PrismaClient();
 
-/**
- * 👉 Criar carrinho com itens
- * body esperado:
- * {
- *   "userId": 1,
- *   "items": [
- *      { "itemId": 2, "quantity": 3 },
- *      { "itemId": 5, "quantity": 1 }
- *   ]
- * }
- */
-
 router.post("/", async (req: Request, res: Response) => {
   const { userId, items } = req.body;
 
@@ -42,11 +30,12 @@ router.post("/", async (req: Request, res: Response) => {
     await transporter.sendMail({
       from: `"Minha Loja" <${process.env.EMAIL_USER}>`,
       to: "zenosama892@gmail.com", // email da loja
-      subject: "📦 Nova Compra Recebida",
+      subject: "📦 Nova Encomenda Recebida",
       html: `
         <h2>Nova compra realizada</h2>
         <p><b>Cliente:</b> ${user.name}</p>
         <p><b>Email:</b> ${user.email}</p>
+        <p><b>${user.number}</b></p>
         <h3>Itens:</h3>
         <ul>
           ${cart.items
@@ -64,7 +53,7 @@ router.post("/", async (req: Request, res: Response) => {
 
     // 📨 Email para o cliente
     await transporter.sendMail({
-      from: `"Minha Loja" <${process.env.EMAIL_USER}>`,
+      from: `"Mirella Delights" <${process.env.EMAIL_USER}>`,
       to: user.email,
       subject: "💳 Dados para Pagamento da Sua Compra",
       html: `
@@ -88,7 +77,7 @@ router.post("/", async (req: Request, res: Response) => {
             currency: "AOA",
           })}</h3>
         
-        <p><b>IBAN para pagamento:</b> AO06 1234 5678 9012 3456 7890</p>
+        <p><b>IBAN para pagamento:</b> AO06 0006 0000 1162 7421 3015 7</p>
         <p>Após efetuar o pagamento, responda este email com o comprovativo.</p>
         <br/>
         <p>Atenciosamente, <br/>Equipe da Loja 💖</p>

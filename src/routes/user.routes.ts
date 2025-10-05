@@ -12,25 +12,36 @@ router.get("/", async (req, res) => {
 
 // Criar novo usuário
 router.post("/", async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, number } = req.body;
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  try {
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ error: "Email já está em uso." });
+    }
 
-  const newUser = await prisma.user.create({
-    data: { name, email, password: hashedPassword },
-  });
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  res.json(newUser);
+    const newUser = await prisma.user.create({
+      data: { name, email, password: hashedPassword, number },
+    });
+
+    res.status(201).json(newUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao criar usuário." });
+  }
 });
+
 
 // Editar usuário
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { name, email } = req.body;
+  const { name, email, number } = req.body;
 
   const updatedUser = await prisma.user.update({
     where: { id: Number(id) },
-    data: { name, email },
+    data: { name, email, number },
   });
 
   res.json(updatedUser);
@@ -40,9 +51,26 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
-  await prisma.user.delete({ where: { id: Number(id) } });
+  try {
+    await prisma.$transaction([
+      prisma.cartItem.deleteMany({
+        where: { cart: { userId: Number(id) } },
+      }),
+      prisma.cart.deleteMany({
+        where: { userId: Number(id) },
+      }),
+      prisma.user.delete({
+        where: { id: Number(id) },
+      }),
+    ]);
 
-  res.json({ message: "Usuário apagado com sucesso!" });
+    res.status(200).json({ message: "Usuário e dados associados apagados com sucesso." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao apagar usuário." });
+  }
 });
+
+
 
 export default router;

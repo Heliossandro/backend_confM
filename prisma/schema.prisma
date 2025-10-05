@@ -14,6 +14,7 @@ model User {
   name      String
   email     String    @unique
   password  String
+  number    String
   createdAt DateTime  @default(now())
 
   carts     Cart[]
@@ -43,7 +44,7 @@ model Cart {
   userId    Int
   createdAt DateTime   @default(now())
 
-  user      User       @relation(fields: [userId], references: [id])
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   items     CartItem[]
 }
 
@@ -53,6 +54,6 @@ model CartItem {
   itemId   Int
   quantity Int    @default(1)
 
-  cart     Cart   @relation(fields: [cartId], references: [id])
+  cart     Cart   @relation(fields: [cartId], references: [id], onDelete: Cascade)
   item     Item   @relation(fields: [itemId], references: [id])
 }
